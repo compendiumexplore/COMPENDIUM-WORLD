@@ -27,8 +27,7 @@ function MiniGlobe({ data }) {
   useEffect(() => {
     const physical = [];
     const satellites = [];
-    let index = 0
-      ;
+    let index = 0;
 
     if (data) {
       Object.values(data).forEach((subcategories) => {
@@ -244,18 +243,19 @@ export default function TopBar({
 
       <nav
         style={{
-          width: "100%",
-          height: isMobile ? "60px" : "80px",
-          padding: isMobile ? "0 20px" : "0 40px",
+          width: isMobile ? "calc(100% - 32px)" : "calc(100% - 48px)",
+          height: isMobile ? "60px" : "72px",
+          padding: isMobile ? "0 20px" : "0 32px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           position: "fixed",
-          top: 0,
-          left: 0,
+          top: isMobile ? "16px" : "24px",
+          left: isMobile ? "16px" : "24px",
           zIndex: 10000,
-          backgroundColor: "#FFF",
-          borderBottom: "1px solid #E5E5E5",
+          backgroundColor: "#F2F2F2",
+          borderRadius: "16px",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
           boxSizing: "border-box",
         }}
       >
@@ -319,46 +319,47 @@ export default function TopBar({
           </div>
         </div>
 
-       <div
+        <div
           onClick={() => { reset(); handleCloseMenu(); }}
           style={{
             position: "absolute",
             left: "50%",
             transform: "translateX(-50%)",
             display: "flex",
-            alignItems: "flex-end", // Align bottom edges to font baseline
+            alignItems: "center", // Center alignment for perfect optical balance
             cursor: "pointer",
-            gap: "6px",
+            gap: "8px",
           }}
         >
           {/* --- TYPOGRAPHY LOGO --- */}
           <div style={{
             fontFamily: '"Instrument Serif", serif',
-            fontSize: isMobile ? "24px" : "30px",
+            fontSize: isMobile ? "26px" : "34px", // Slightly larger for prominence
             fontWeight: "400",
             color: "#000",
             letterSpacing: "normal",
             lineHeight: 1,
+            marginTop: isMobile ? "2px" : "3px", // Nudge down to align visually
           }}>
             The Compendium
           </div>
 
-          {/* --- NUMBER BADGE MATCHING X-HEIGHT ('m') --- */}
+          {/* --- REFINED NUMBER BADGE --- */}
           <div
             style={{
-              border: "1.2px solid #0014FF",
+              fontFamily: '"Geist", sans-serif',
+              border: "1px solid rgba(0,0,0,0.85)", // Slightly softer border
               borderRadius: "4px",
-              padding: "0 4px",
-              minWidth: isMobile ? "16px" : "19px",
-              height: isMobile ? "11px" : "14px", // Matches x-height of "m"
-              fontSize: isMobile ? "8px" : "9.5px",
-              fontWeight: "700",
-              color: "#0014FF",
+              padding: isMobile ? "0 5px" : "0 6px",
+              minWidth: isMobile ? "20px" : "26px",
+              height: isMobile ? "15px" : "20px", 
+              fontSize: isMobile ? "9px" : "11px",
+              fontWeight: "500", // Clean, medium weight (not overly bold)
+              color: "#000",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               boxSizing: "border-box",
-              marginBottom: isMobile ? "2px" : "3px", // Aligns bottom edge to "ium" baseline
             }}
           >
             {totalCount || 0}
@@ -461,20 +462,33 @@ export default function TopBar({
             onClick={handleCloseMenu}
             style={{
               position: "fixed",
-              top: isMobile ? "60px" : "80px",
+              top: 0,
               left: 0,
               width: "100vw",
-              height: isMobile ? "calc(100vh - 60px)" : "calc(100vh - 80px)",
-              zIndex: 9999,
-              backgroundColor: "rgba(242, 242, 242, 0.5)", 
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
+              height: "100vh",
+              paddingTop: isMobile ? "92px" : "120px", 
+              boxSizing: "border-box",
+              zIndex: 99999, // Bulletproof Z-Index to force it above floating pills
               display: "flex",
               justifyContent: "center",
               alignItems: "center", 
-              overflow: "hidden" 
             }}
           >
+            {/* STATIC BLUR LAYER: Separated from the framer-motion div to bypass Safari/Chrome render bugs */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(242, 242, 242, 0.5)", 
+                backdropFilter: "blur(40px)",
+                WebkitBackdropFilter: "blur(40px)",
+                zIndex: 0,
+              }}
+            />
+
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
@@ -483,6 +497,7 @@ export default function TopBar({
                 maxWidth: "860px",
                 height: isMobile ? "calc(100% - 40px)" : "584px",
                 margin: "20px",
+                zIndex: 1, // Keeps the menu content safely above the new static blur layer
               }}
             >
               <AnimatePresence>
