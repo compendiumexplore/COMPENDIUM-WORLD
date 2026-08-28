@@ -27,7 +27,8 @@ function MiniGlobe({ data }) {
   useEffect(() => {
     const physical = [];
     const satellites = [];
-    let index = 0;
+    let index = 0
+      ;
 
     if (data) {
       Object.values(data).forEach((subcategories) => {
@@ -318,46 +319,46 @@ export default function TopBar({
           </div>
         </div>
 
-        <div
+       <div
           onClick={() => { reset(); handleCloseMenu(); }}
           style={{
             position: "absolute",
             left: "50%",
             transform: "translateX(-50%)",
             display: "flex",
-            alignItems: "center", // This geometrically centers the items
+            alignItems: "flex-end", // Align bottom edges to font baseline
             cursor: "pointer",
-            gap: "8px",
+            gap: "6px",
           }}
         >
-          {/* --- ADJUSTED TYPOGRAPHY LOGO --- */}
+          {/* --- TYPOGRAPHY LOGO --- */}
           <div style={{
             fontFamily: '"Instrument Serif", serif',
-            fontSize: isMobile ? "24px" : "30px", // Reduced size
+            fontSize: isMobile ? "24px" : "30px",
             fontWeight: "400",
             color: "#000",
             letterSpacing: "normal",
             lineHeight: 1,
-            marginTop: isMobile ? "1px" : "2px" // Optical nudge downwards
           }}>
             The Compendium
           </div>
 
+          {/* --- NUMBER BADGE MATCHING X-HEIGHT ('m') --- */}
           <div
             style={{
-              border: "1.5px solid #0014FF",
-              borderRadius: "6px",
-              padding: isMobile ? "2px 4px" : "2px 6px",
-              minWidth: isMobile ? "18px" : "20px",
-              height: isMobile ? "18px" : "20px",
-              fontSize: isMobile ? "10px" : "11px",
+              border: "1.2px solid #0014FF",
+              borderRadius: "4px",
+              padding: "0 4px",
+              minWidth: isMobile ? "16px" : "19px",
+              height: isMobile ? "11px" : "14px", // Matches x-height of "m"
+              fontSize: isMobile ? "8px" : "9.5px",
               fontWeight: "700",
               color: "#0014FF",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               boxSizing: "border-box",
-              // Removed the old marginTop so the box sits perfectly center
+              marginBottom: isMobile ? "2px" : "3px", // Aligns bottom edge to "ium" baseline
             }}
           >
             {totalCount || 0}
