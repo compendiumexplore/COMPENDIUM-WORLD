@@ -40,7 +40,7 @@ function useWindowSize() {
 }
 
 // --- FIXED: WRAPPED IN REACT.MEMO TO PREVENT RE-RENDERS ---
-const FloatingMapTile = React.memo(function FloatingMapTile({ data, onClick, isMobile }) {
+const FloatingMapTile = React.memo(function FloatingMapTile({ data, onClick, isMobile, isMenuOpen }) {
   const globeRef = useRef();
   const [markers, setMarkers] = useState([]);
   const offsetRef = useRef(0);
@@ -134,9 +134,9 @@ const FloatingMapTile = React.memo(function FloatingMapTile({ data, onClick, isM
         right: isMobile ? "24px" : "40px",
         width: isMobile ? "120px" : "150px",
         height: isMobile ? "70px" : "86px",
-        backgroundColor: "rgba(255, 255, 255, 0.5)", 
-        backdropFilter: "blur(24px) saturate(120%)", 
-        WebkitBackdropFilter: "blur(24px) saturate(120%)",
+        backgroundColor: isMenuOpen ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.5)", 
+        backdropFilter: isMenuOpen ? "none" : "blur(24px) saturate(120%)", 
+        WebkitBackdropFilter: isMenuOpen ? "none" : "blur(24px) saturate(120%)",
         border: "1px solid rgba(255, 255, 255, 0.7)", 
         borderRadius: "12px",
         boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.08)",
@@ -146,6 +146,9 @@ const FloatingMapTile = React.memo(function FloatingMapTile({ data, onClick, isM
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        opacity: isMenuOpen ? 0 : 1,
+        pointerEvents: isMenuOpen ? "none" : "auto",
+        transition: "opacity 0.2s ease",
       }}
     >
       <div style={{ pointerEvents: "none", position: "absolute", top: "-15px" }}>
@@ -902,12 +905,9 @@ export default function App() {
                                   position: "absolute",
                                   padding: isMobile ? "8px 12px" : "14px 38px",
                                   borderRadius: "12px",
-                                  backgroundColor: "rgba(255, 255, 255, 0.4)",
-                                  backdropFilter: "blur(20px) saturate(150%)",
-                                  WebkitBackdropFilter:
-                                    "blur(20px) saturate(150%)",
-                                  border: "1px solid rgba(255, 255, 255, 0.5)",
-                                  boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.1)",
+                                  backgroundColor: "#FFFFFF", // Solid white hides the line!
+                                  border: "1px solid rgba(0, 0, 0, 0.05)", // Softer border for the solid white
+                                  boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.08)",
                                   fontSize: isMobile ? "9px" : "13px",
                                   fontWeight: "700",
                                   zIndex: 10,
@@ -957,9 +957,9 @@ export default function App() {
                   width: isMobile ? "40px" : "48px",
                   height: isMobile ? "40px" : "48px",
                   borderRadius: "50%",
-                  backgroundColor: "rgba(255, 255, 255, 0.4)",
-                  backdropFilter: "blur(20px) saturate(150%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(150%)",
+                  backgroundColor: isMenuOpen ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.4)",
+                  backdropFilter: isMenuOpen ? "none" : "blur(20px) saturate(150%)",
+                  WebkitBackdropFilter: isMenuOpen ? "none" : "blur(20px) saturate(150%)",
                   border: "1px solid rgba(255, 255, 255, 0.5)",
                   boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.1)",
                   display: "flex",
@@ -968,6 +968,9 @@ export default function App() {
                   cursor: "pointer",
                   zIndex: 5000,
                   color: "#000",
+                  opacity: isMenuOpen ? 0 : 1,
+                  pointerEvents: isMenuOpen ? "none" : "auto",
+                  transition: "opacity 0.2s ease",
                 }}
               >
                 <svg
@@ -986,11 +989,12 @@ export default function App() {
               </motion.div>
 
               {level !== 3 && level !== 4 && level !== 5 && (
-                <FloatingMapTile 
-                  data={data} 
-                  isMobile={isMobile} 
-                  onClick={handleOverviewClick} 
-                />
+                                <FloatingMapTile 
+                                data={data} 
+                                isMobile={isMobile} 
+                                onClick={handleOverviewClick} 
+                                isMenuOpen={isMenuOpen}
+                              />
               )}
             </div>
           </motion.div>
