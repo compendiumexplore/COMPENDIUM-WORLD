@@ -192,10 +192,9 @@ export default function TopBar({
 
   const imgUrl = typeof currentItem === "string" ? currentItem : currentItem?.image;
 
+  // --- FIXED CARD STYLE: Removed redundant blur to stop Chrome glitches ---
   const cardStyle = {
-    backgroundColor: "rgba(255, 255, 255, 0.5)", 
-    backdropFilter: "blur(24px) saturate(120%)", 
-    WebkitBackdropFilter: "blur(24px) saturate(120%)",
+    backgroundColor: "rgba(255, 255, 255, 0.75)", // Solid enough to look like frosted glass
     border: "1px solid rgba(255, 255, 255, 0.7)", 
     borderRadius: "12px",
     padding: isMobile ? "20px" : "32px",
@@ -326,7 +325,7 @@ export default function TopBar({
             left: "50%",
             transform: "translateX(-50%)",
             display: "flex",
-            alignItems: "center", // Center alignment for perfect optical balance
+            alignItems: "center", 
             cursor: "pointer",
             gap: "8px",
           }}
@@ -334,12 +333,12 @@ export default function TopBar({
           {/* --- TYPOGRAPHY LOGO --- */}
           <div style={{
             fontFamily: '"Instrument Serif", serif',
-            fontSize: isMobile ? "26px" : "34px", // Slightly larger for prominence
+            fontSize: isMobile ? "26px" : "34px", 
             fontWeight: "400",
             color: "#000",
             letterSpacing: "normal",
             lineHeight: 1,
-            marginTop: isMobile ? "2px" : "3px", // Nudge down to align visually
+            marginTop: isMobile ? "2px" : "3px", 
           }}>
             The Compendium
           </div>
@@ -348,13 +347,13 @@ export default function TopBar({
           <div
             style={{
               fontFamily: '"Geist", sans-serif',
-              border: "1px solid rgba(0,0,0,0.85)", // Slightly softer border
+              border: "1px solid rgba(0,0,0,0.85)", 
               borderRadius: "4px",
               padding: isMobile ? "0 5px" : "0 6px",
               minWidth: isMobile ? "20px" : "26px",
               height: isMobile ? "15px" : "20px", 
               fontSize: isMobile ? "9px" : "11px",
-              fontWeight: "500", // Clean, medium weight (not overly bold)
+              fontWeight: "500", 
               color: "#000",
               display: "flex",
               alignItems: "center",
@@ -452,6 +451,7 @@ export default function TopBar({
         </div>
       </nav>
 
+      {/* --- MENU OVERLAY WITH CHROME FIX (99.9vh & 0.1px top) --- */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -466,12 +466,12 @@ export default function TopBar({
               left: 0,
               width: "100vw",
               height: "100vh",
-              paddingTop: isMobile ? "92px" : "120px", 
+              // Accounts for TopBar at the top and Footer at the bottom
+              paddingTop: isMobile ? "76px" : "96px", 
+              paddingBottom: isMobile ? "30px" : "40px",
               boxSizing: "border-box",
-              zIndex: 9998, 
-              backgroundColor: "rgba(242, 242, 242, 0.5)", 
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
+              zIndex: 9998, // Keeps TopBar and Footer visible on top
+              backgroundColor: "rgba(0, 0, 0, 0.85)", // Smooth dark overlay without blur
               display: "flex",
               justifyContent: "center",
               alignItems: "center", 
