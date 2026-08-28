@@ -41,21 +41,24 @@ export default function Footer({ isMobile }) {
           gap: "24px",
           zIndex: 10000, 
           pointerEvents: "none", 
+          mixBlendMode: "difference", // Forces text to contrast with the background
+          color: "#FFF", // Pure white inverted becomes pure black on a white bg
         }}
       >
         <span
           onClick={() => setOpenModal("imprint")}
           style={{
             fontSize: "10px",
-            color: "#999",
+            color: "inherit",
+            opacity: 0.6,
             cursor: "pointer",
             pointerEvents: "auto",
             textTransform: "uppercase",
             letterSpacing: "0.05em",
-            transition: "color 0.2s",
+            transition: "opacity 0.2s",
           }}
-          onMouseEnter={(e) => (e.target.style.color = "#000")}
-          onMouseLeave={(e) => (e.target.style.color = "#999")}
+          onMouseEnter={(e) => (e.target.style.opacity = 1)}
+          onMouseLeave={(e) => (e.target.style.opacity = 0.6)}
         >
           Imprint
         </span>
@@ -63,15 +66,16 @@ export default function Footer({ isMobile }) {
           onClick={() => setOpenModal("privacy")}
           style={{
             fontSize: "10px",
-            color: "#999",
+            color: "inherit",
+            opacity: 0.6,
             cursor: "pointer",
             pointerEvents: "auto",
             textTransform: "uppercase",
             letterSpacing: "0.05em",
-            transition: "color 0.2s",
+            transition: "opacity 0.2s",
           }}
-          onMouseEnter={(e) => (e.target.style.color = "#000")}
-          onMouseLeave={(e) => (e.target.style.color = "#999")}
+          onMouseEnter={(e) => (e.target.style.opacity = 1)}
+          onMouseLeave={(e) => (e.target.style.opacity = 0.6)}
         >
           Privacy Policy
         </span>
@@ -145,7 +149,7 @@ export default function Footer({ isMobile }) {
                   <p style={textStyle}>
                     <strong>Contact</strong>
                     <br />
-                    compendium.explore@gmail.com
+                    Email: compendium.explore@gmail.com
                   </p>
                 </>
               )}
