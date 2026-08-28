@@ -667,7 +667,7 @@ export default function App() {
                 <div
                   style={{
                     position: "fixed",
-                    top: isMobile ? "80px" : "100px",
+                    top: isMobile ? "100px" : "120px",
                     left: uiEdge,
                     display: "flex",
                     alignItems: "center",
