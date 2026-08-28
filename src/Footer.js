@@ -145,7 +145,7 @@ export default function Footer({ isMobile }) {
                   <p style={textStyle}>
                     <strong>Contact</strong>
                     <br />
-                    Email: compendium.explore@gmail.com
+                    compendium.explore@gmail.com
                   </p>
                 </>
               )}
