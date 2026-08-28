@@ -468,7 +468,7 @@ export default function TopBar({
               height: "100vh",
               paddingTop: isMobile ? "92px" : "120px", 
               boxSizing: "border-box",
-              zIndex: 99999, // Bulletproof Z-Index to force it above floating pills
+              zIndex: 9998, // LOWERED to 9998 so the TopBar (10000) and Footer stay visible!
               display: "flex",
               justifyContent: "center",
               alignItems: "center", 
