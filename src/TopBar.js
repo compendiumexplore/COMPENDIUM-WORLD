@@ -471,7 +471,7 @@ export default function TopBar({
               paddingBottom: isMobile ? "30px" : "40px",
               boxSizing: "border-box",
               zIndex: 9998, // Keeps TopBar and Footer visible on top
-              backgroundColor: "rgba(0, 0, 0, 0.85)", // Smooth dark overlay without blur
+              backgroundColor: "rgba(0, 0, 0, 0.95)", // Smooth dark overlay without blur
               display: "flex",
               justifyContent: "center",
               alignItems: "center", 
