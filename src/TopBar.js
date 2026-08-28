@@ -468,27 +468,16 @@ export default function TopBar({
               height: "100vh",
               paddingTop: isMobile ? "92px" : "120px", 
               boxSizing: "border-box",
-              zIndex: 9998, // LOWERED to 9998 so the TopBar (10000) and Footer stay visible!
+              zIndex: 9998, 
+              backgroundColor: "rgba(242, 242, 242, 0.5)", 
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center", 
+              overflow: "hidden" 
             }}
           >
-            {/* STATIC BLUR LAYER: Separated from the framer-motion div to bypass Safari/Chrome render bugs */}
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                backgroundColor: "rgba(242, 242, 242, 0.5)", 
-                backdropFilter: "blur(40px)",
-                WebkitBackdropFilter: "blur(40px)",
-                zIndex: 0,
-              }}
-            />
-
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
@@ -497,7 +486,6 @@ export default function TopBar({
                 maxWidth: "860px",
                 height: isMobile ? "calc(100% - 40px)" : "584px",
                 margin: "20px",
-                zIndex: 1, // Keeps the menu content safely above the new static blur layer
               }}
             >
               <AnimatePresence>
