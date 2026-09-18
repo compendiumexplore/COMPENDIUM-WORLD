@@ -13,6 +13,7 @@ const SOCIAL_BLACKLIST = [
 
 // --- DOMAINS THAT BLOCK IFRAMES BUT ALLOW SCREENSHOTS ---
 const IFRAME_BLACKLIST = [
+  "maquis.hamburg",
   "uppervoid.com",
   "www.obscure-objects.com",
   "velvetyne.fr",
