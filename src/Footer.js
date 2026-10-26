@@ -108,7 +108,7 @@ export default function Footer({ isMobile }) {
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
-                width: "100%",
+                width: isMobile ? "calc(100% - 40px)" : "100%", // Gibt dem Modal auf mobilen Geräten einen sauberen Rand
                 maxWidth: "680px",
                 maxHeight: "80vh",
                 overflowY: "auto",
