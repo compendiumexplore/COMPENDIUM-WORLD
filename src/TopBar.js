@@ -240,21 +240,22 @@ export default function TopBar({
         }
       `}</style>
 
-      <nav
+<nav
         style={{
           width: isMobile ? "calc(100% - 32px)" : "calc(100% - 48px)",
           height: isMobile ? "60px" : "72px",
           padding: isMobile ? "0 20px" : "0 32px",
           display: "flex",
+          flexDirection: isMobile ? "row-reverse" : "row", // Tauscht Menü und Bild auf Mobile
           justifyContent: "space-between",
           alignItems: "center",
           position: "fixed",
           top: isMobile ? "16px" : "24px",
           left: isMobile ? "16px" : "24px",
           zIndex: 10000,
-          backgroundColor: "#F2F2F2",
+          backgroundColor: isMobile ? "#FFFFFF" : "#F2F2F2", // Klares Weiß auf Mobile
           borderRadius: "16px",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
+          boxShadow: isMobile ? "0 10px 40px rgba(0,0,0,0.15)" : "0 8px 32px rgba(0,0,0,0.08)", // Stärkerer Schatten
           boxSizing: "border-box",
         }}
       >
@@ -327,18 +328,19 @@ export default function TopBar({
             display: "flex",
             alignItems: "center", 
             cursor: "pointer",
-            gap: "8px",
+            gap: isMobile ? "3px" : "8px", // Tightens the gap on mobile
           }}
         >
-          {/* --- TYPOGRAPHY LOGO --- */}
-          <div style={{
+         {/* --- TYPOGRAPHY LOGO --- */}
+         <div style={{
             fontFamily: '"Instrument Serif", serif',
-            fontSize: isMobile ? "26px" : "34px", 
+            fontSize: isMobile ? "22px" : "34px", 
             fontWeight: "400",
             color: "#000",
             letterSpacing: "normal",
             lineHeight: 1,
-            marginTop: isMobile ? "2px" : "3px", 
+            marginTop: isMobile ? "2px" : "3px",
+            whiteSpace: "nowrap",
           }}>
             The Compendium
           </div>
@@ -359,6 +361,7 @@ export default function TopBar({
               alignItems: "center",
               justifyContent: "center",
               boxSizing: "border-box",
+              transform: isMobile ? "translateY(-6px)" : "none", // Tucks it into superscript on mobile
             }}
           >
             {totalCount || 0}
@@ -471,7 +474,7 @@ export default function TopBar({
               paddingBottom: isMobile ? "30px" : "40px",
               boxSizing: "border-box",
               zIndex: 9998, // Keeps TopBar and Footer visible on top
-              backgroundColor: "rgba(0, 0, 0, 0.95)", // Smooth dark overlay without blur
+              backgroundColor: "rgba(0, 0, 0, 0.85)", // Smooth dark overlay without blur
               display: "flex",
               justifyContent: "center",
               alignItems: "center", 
