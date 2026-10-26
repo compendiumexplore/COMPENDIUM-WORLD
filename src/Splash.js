@@ -17,7 +17,7 @@ export default function Splash({ onEnter, isMobile }) {
     const ctx = canvas.getContext("2d");
 
     const CELL_SIZE = 30; // 30x30px square size
-    const TICK_INTERVAL = 160; // 160ms movement speed
+    const TICK_INTERVAL = isMobile ? 266 : 160; // 40% slower on mobile
     const MARGIN_CELLS = 4; // Keeps pixels away from outer screen edges
     const DIM_DURATION = 2000; // 2 seconds dim-on glow duration
     const HOLD_DURATION = 1000; // 1 second sitting still at full brightness
