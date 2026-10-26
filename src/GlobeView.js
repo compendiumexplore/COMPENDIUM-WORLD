@@ -42,7 +42,7 @@ export default function GlobeView({ items, isMobile, onMarkerClick }) {
 
   useEffect(() => {
     if (globeRef.current) {
-      globeRef.current.pointOfView({ altitude: isMobile ? 3 : 2.2 });
+      globeRef.current.pointOfView({ altitude: isMobile ? 4.5 : 2.2 });
       const controls = globeRef.current.controls();
       if (controls) {
         controls.autoRotate = true;
@@ -216,39 +216,39 @@ export default function GlobeView({ items, isMobile, onMarkerClick }) {
     ? "grab"
     : "default";
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "#E5E5E5",
-        zIndex: 10,
-        overflow: "hidden",
-        fontFamily: '"IBM Plex Sans", sans-serif',
-        cursor: "default",
-      }}
-    >
-      <div
-        onMouseDown={() => setIsGrabbing(true)}
-        onMouseUp={() => setIsGrabbing(false)}
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
         style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          paddingTop: "60px",
-          boxSizing: "border-box",
-          cursor: activeCursor,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: isMobile ? "100dvh" : "100vh",
+          backgroundColor: "#E5E5E5",
+          zIndex: 10,
+          overflow: "hidden",
+          fontFamily: '"IBM Plex Sans", sans-serif',
+          cursor: "default",
         }}
       >
+        <div
+          onMouseDown={() => setIsGrabbing(true)}
+          onMouseUp={() => setIsGrabbing(false)}
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingTop: isMobile ? "0px" : "60px",
+            boxSizing: "border-box",
+            cursor: activeCursor,
+          }}
+        >
         <Globe
           ref={globeRef}
           width={dimensions.width}
