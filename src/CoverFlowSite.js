@@ -302,8 +302,9 @@ export default function CoverFlowSite({
       <div
         style={{
           width: "100%",
-          height: isMobile ? "calc(100vh - 60px)" : "calc(100vh - 80px)",
-          marginTop: isMobile ? "60px" : "80px",
+          height: isMobile ? "100dvh" : "calc(100vh - 80px)", // Uses dynamic viewport height on mobile
+          marginTop: isMobile ? "0px" : "80px", // Removes the offset that shoved the card down
+          paddingTop: isMobile ? "40px" : "0px", // Balances spacing between breadcrumbs and bottom controls
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -707,33 +708,41 @@ export default function CoverFlowSite({
               exit={{ y: 20, opacity: 0, scale: 0.95 }}
               transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.1 }}
               style={{
-                width: "calc(100% - 40px)",
-                maxWidth: "460px",
+                width: isMobile ? "calc(100% - 48px)" : "calc(100% - 40px)",
+                maxWidth: isMobile ? "360px" : "460px",
                 backgroundColor: "rgba(255, 255, 255, 0.95)",
                 backdropFilter: "blur(24px) saturate(120%)",
                 WebkitBackdropFilter: "blur(24px) saturate(120%)",
                 borderRadius: "16px",
-                padding: isMobile ? "24px" : "32px",
+                padding: isMobile ? "24px 20px" : "32px",
                 boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)",
                 border: "1px solid rgba(255, 255, 255, 0.5)",
                 display: "flex",
                 flexDirection: "column",
-                gap: "20px"
+                gap: isMobile ? "16px" : "20px",
+                boxSizing: "border-box",
               }}
             >
               <p style={{ 
                 margin: 0, 
-                fontSize: isMobile ? "14px" : "15px", 
+                fontSize: isMobile ? "13px" : "15px", 
                 fontFamily: '"Geist", sans-serif', 
                 color: "#000", 
-                lineHeight: "1.5" 
+                lineHeight: "1.45" 
               }}>
-                <strong style={{ display: "block", marginBottom: "8px", fontSize: "16px" }}>
+                <strong style={{ display: "block", marginBottom: "8px", fontSize: isMobile ? "15px" : "16px" }}>
                   Enhance your experience
                 </strong>
                 We load live interactive previews of the featured projects. Enabling this connects you to external third-party servers, which will process your IP address. For details, see our Privacy Policy.
               </p>
-              <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: isMobile ? "column" : "row",
+                  gap: "10px",
+                  width: "100%",
+                }}
+              >
                 <button
                   onClick={() => {
                     setConsentStatus("granted");
@@ -741,7 +750,7 @@ export default function CoverFlowSite({
                   }}
                   style={{
                     flex: 1,
-                    padding: "12px",
+                    padding: isMobile ? "13px" : "12px",
                     borderRadius: "8px",
                     backgroundColor: "#0014FF",
                     color: "#FFF",
@@ -750,7 +759,7 @@ export default function CoverFlowSite({
                     fontSize: isMobile ? "11px" : "12px",
                     cursor: "pointer",
                     letterSpacing: "0.02em",
-                    textTransform: "uppercase"
+                    textTransform: "uppercase",
                   }}
                 >
                   Load Live Previews
@@ -762,7 +771,7 @@ export default function CoverFlowSite({
                   }}
                   style={{
                     flex: 1,
-                    padding: "12px",
+                    padding: isMobile ? "13px" : "12px",
                     borderRadius: "8px",
                     backgroundColor: "rgba(0, 0, 0, 0.05)",
                     color: "#000",
@@ -771,7 +780,7 @@ export default function CoverFlowSite({
                     fontSize: isMobile ? "11px" : "12px",
                     cursor: "pointer",
                     letterSpacing: "0.02em",
-                    textTransform: "uppercase"
+                    textTransform: "uppercase",
                   }}
                 >
                   Limit my experience
