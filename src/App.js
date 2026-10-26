@@ -130,7 +130,7 @@ const FloatingMapTile = React.memo(function FloatingMapTile({ data, onClick, isM
       onClick={() => onClick("map")}
       style={{
         position: "fixed",
-        bottom: isMobile ? "24px" : "40px",
+        bottom: isMobile ? "60px" : "40px", // Pushes the globe up on mobile to clear the footer
         right: isMobile ? "24px" : "40px",
         width: isMobile ? "120px" : "150px",
         height: isMobile ? "70px" : "86px",
@@ -290,18 +290,24 @@ export default function App() {
         const generatedPills = [];
 
         categories.forEach((name) => {
-          const w = isMobile ? name.length * 2.2 + 12 : name.length * 0.5 + 8;
-          const h = isMobile ? 8 : 6;
+          // Precise hitbox matching the rendered dimensions
+          const w = isMobile ? name.length * 1.8 + 10 : name.length * 0.5 + 8;
+          const h = isMobile ? 4.8 : 6;
 
           let x = 0;
           let y = 0;
           let overlaps = false;
           let attempts = 0;
 
+          const spawnMinX = isMobile ? 4 : 8;
+          const spawnMaxX = isMobile ? Math.max(spawnMinX, 96 - w) : 70;
+          const spawnMinY = isMobile ? 17 : 16;
+          const spawnMaxY = isMobile ? 65 : 71;
+
           do {
             overlaps = false;
-            x = Math.random() * (isMobile ? 50 : 70) + 8;
-            y = Math.random() * 55 + 16;
+            x = Math.random() * (spawnMaxX - spawnMinX) + spawnMinX;
+            y = Math.random() * (spawnMaxY - spawnMinY) + spawnMinY;
 
             for (let existingPill of generatedPills) {
               if (
@@ -315,16 +321,16 @@ export default function App() {
               }
             }
             attempts++;
-          } while (overlaps && attempts < 150);
+          } while (overlaps && attempts < 200);
 
           generatedPills.push({
             name,
             x,
             y,
-            vx: (Math.random() - 0.5) * (isMobile ? 0.004 : 0.006),
-            vy: (Math.random() - 0.5) * (isMobile ? 0.004 : 0.006),
+            vx: (Math.random() - 0.5) * (isMobile ? 0.003 : 0.006),
+            vy: (Math.random() - 0.5) * (isMobile ? 0.003 : 0.006),
             w,
-            h: isMobile ? 11 : 6,
+            h, // Uses the realistic 4.8% height instead of 11%
           });
         });
 
@@ -488,20 +494,25 @@ export default function App() {
               y: pill.y + pill.vy * speedMultiplier,
             };
 
-            const maxX = isMobile ? 100 - pill.w : 98 - pill.w;
-            if (n.x <= 2) {
-              n.x = 2;
+            const minX = isMobile ? 3 : 2;
+            const maxX = isMobile ? Math.max(minX, 97 - pill.w) : 98 - pill.w;
+            if (n.x <= minX) {
+              n.x = minX;
               n.vx = Math.abs(n.vx);
             } else if (n.x >= maxX) {
-              n.x = Math.max(2, maxX);
+              n.x = maxX;
               n.vx = -Math.abs(n.vx);
             }
 
-            if (n.y <= 15) {
-              n.y = 15;
+            // Safe vertical boundaries: 17% clears TopBar, 72% clears Globe, Back Button & Footer
+            const minY = isMobile ? 17 : 15;
+            const maxY = isMobile ? 72 - pill.h : 85 - pill.h;
+
+            if (n.y <= minY) {
+              n.y = minY;
               n.vy = Math.abs(n.vy);
-            } else if (n.y + pill.h >= 85) {
-              n.y = 85 - pill.h;
+            } else if (n.y >= maxY) {
+              n.y = maxY;
               n.vy = -Math.abs(n.vy);
             }
 
@@ -666,11 +677,12 @@ export default function App() {
                 onCategorySelect={handleCategorySelect} 
               />
               <Footer isMobile={isMobile} />
-              {level >= 2 && (
+              {/* DESKTOP BREADCRUMB */}
+              {!isMobile && level >= 2 && (
                 <div
                   style={{
                     position: "fixed",
-                    top: isMobile ? "100px" : "120px",
+                    top: "120px",
                     left: uiEdge,
                     display: "flex",
                     alignItems: "center",
@@ -711,6 +723,76 @@ export default function App() {
                     </>
                   )}
                 </div>
+              )}
+
+              {/* MOBILE DOCKED BLUE BAR (LEVELS 2, 3, 4, 5) */}
+              {isMobile && level >= 2 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -12 }}
+                  animate={{
+                    opacity: isMenuOpen ? 0 : 1,
+                    y: isMenuOpen ? -12 : 0,
+                  }}
+                  transition={{ duration: 0.2 }}
+                  style={{
+                    position: "fixed",
+                    top: "60px",
+                    left: "16px",
+                    width: "calc(100% - 32px)",
+                    height: "64px",
+                    backgroundColor: "#0014FF",
+                    borderRadius: "0 0 16px 16px",
+                    boxShadow: "0 12px 32px rgba(0, 20, 255, 0.25)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingTop: "16px",
+                    paddingLeft: "20px",
+                    paddingRight: "20px",
+                    boxSizing: "border-box",
+                    zIndex: 9997, // Places it behind the Menu Overlay (9998)
+                    pointerEvents: isMenuOpen ? "none" : "auto",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: '"Geist", sans-serif',
+                      fontSize: "13px",
+                      fontWeight: "700",
+                      letterSpacing: "0.06em",
+                      color: "#FFF",
+                      textTransform: "uppercase",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {level === 4 || level === 5 ? (
+                      <span>{globalTitle}</span>
+                    ) : level === 3 ? (
+                      <>
+                        <motion.span
+                          whileTap={{ scale: 0.95, opacity: 0.5 }}
+                          onClick={() => setLevel(2)}
+                          style={{
+                            cursor: "pointer",
+                            opacity: 0.75,
+                            padding: "4px 0",
+                          }}
+                        >
+                          {selection.cat}
+                        </motion.span>
+                        <span style={{ opacity: 0.4, margin: "0 6px" }}>/</span>
+                        <span style={{ color: "#FFF" }}>{selection.sub}</span>
+                      </>
+                    ) : (
+                      <span>{selection.cat}</span>
+                    )}
+                  </div>
+                </motion.div>
               )}
 
               {level === 3 || level === 4 || level === 5 ? (
@@ -784,16 +866,16 @@ export default function App() {
                           position: "absolute",
                           left: `${p.x}%`,
                           top: `${p.y}%`,
-                          padding: isMobile ? "10px 20px" : "12px 32px",
+                          padding: isMobile ? "7px 15px" : "12px 32px", // Compact padding on mobile
                           borderRadius: "50px",
                           backgroundColor: "rgba(255, 255, 255, 0.4)",
                           backdropFilter: "blur(20px) saturate(150%)",
                           WebkitBackdropFilter: "blur(20px) saturate(150%)",
                           border: "1px solid rgba(255, 255, 255, 0.5)",
                           boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.1)",
-                          fontSize: isMobile ? "11px" : "12px",
+                          fontSize: isMobile ? "10px" : "12px",
                           fontWeight: "700",
-                          letterSpacing: isMobile ? "0.1em" : "0.15em",
+                          letterSpacing: isMobile ? "0.07em" : "0.15em",
                           cursor: "pointer",
                           zIndex: 10,
                           color: "#000",
@@ -804,144 +886,257 @@ export default function App() {
                       </motion.div>
                     ))}
 
-                  {level === 2 && (
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {Object.keys(data[selection.cat] || {}).map(
-                        (sub, i, arr) => {
-                          const total = arr.length;
-                          const angleOffset =
-                            isMobile && total === 4 ? -45 : -90;
-                          const angle = (i / total) * 360 + angleOffset;
+{level === 2 && (
+                    isMobile ? (
+                      <>
+                        {/* DOCKED BLUE CATEGORY BAR */}
+                       {/* DOCKED BLUE CATEGORY BAR */}
+                       <motion.div
+                          initial={{ opacity: 0, y: -12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.25 }}
+                          style={{
+                            position: "fixed",
+                            top: "60px",
+                            left: "16px",
+                            width: "calc(100% - 32px)",
+                            height: "64px",
+                            backgroundColor: "#0014FF",
+                            borderRadius: "0 0 16px 16px",
+                            boxShadow: "0 12px 32px rgba(0, 20, 255, 0.25)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingTop: "16px", // Compensates for the area covered by the TopBar
+                            paddingLeft: "20px",
+                            paddingRight: "20px",
+                            boxSizing: "border-box",
+                            zIndex: 9999,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: '"Geist", sans-serif',
+                              fontSize: "14px",
+                              fontWeight: "700",
+                              letterSpacing: "0.08em",
+                              color: "#FFF",
+                              textTransform: "uppercase",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              maxWidth: "100%",
+                            }}
+                          >
+                            {selection.cat}
+                          </span>
+                        </motion.div>
 
-                          const radiusX = isMobile ? 140 : 260;
-                          const radiusY = isMobile ? 170 : 260;
-
-                          const baseX =
-                            Math.cos((angle * Math.PI) / 180) * radiusX;
-                          const baseY =
-                            Math.sin((angle * Math.PI) / 180) * radiusY;
-
-                          const offsetY = isMobile ? 20 : 30;
-
-                          return (
-                            <React.Fragment key={sub}>
-                              <svg
-                                style={{
-                                  position: "absolute",
-                                  width: "100%",
-                                  height: "100%",
-                                  zIndex: 5,
-                                  pointerEvents: "none",
-                                }}
-                              >
-                                <motion.line
-                                  initial={{ pathLength: 0, opacity: 0 }}
-                                  animate={{ pathLength: 1, opacity: 1 }}
-                                  transition={{
-                                    duration: 0.8,
-                                    delay: 0.2 + i * 0.05,
-                                  }}
-                                  x1="50%"
-                                  y1={`calc(50% + ${offsetY}px)`}
-                                  x2={`calc(50% + ${baseX}px)`}
-                                  y2={`calc(50% + ${baseY + offsetY}px)`}
-                                  stroke="rgba(0,0,0,0.3)"
-                                  strokeWidth="1"
-                                />
-                              </svg>
-
+                        {/* SCROLLABLE VERTICAL PILL STACK */}
+                        <div
+                          className="hide-global-scrollbar"
+                          style={{
+                            position: "fixed",
+                            top: "136px",
+                            bottom: "115px",
+                            left: 0,
+                            right: 0,
+                            overflowY: "auto",
+                            WebkitOverflowScrolling: "touch",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            padding: "12px 20px",
+                            boxSizing: "border-box",
+                            zIndex: 10,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              gap: "14px",
+                              margin: "auto 0",
+                              width: "100%",
+                            }}
+                          >
+                            {Object.keys(data[selection.cat] || {}).map((sub) => (
                               <motion.div
-                                initial={{
-                                  opacity: 0,
-                                  scale: 0.8,
-                                  x: baseX,
-                                  y: baseY + offsetY,
-                                }}
-                                animate={{
-                                  opacity: 1,
-                                  scale: 1,
-                                  x: baseX,
-                                  y: [
-                                    baseY + offsetY,
-                                    baseY + offsetY - 6,
-                                    baseY + offsetY,
-                                  ],
-                                }}
-                                transition={{
-                                  scale: {
-                                    duration: 0.4,
-                                    delay: 0.2 + i * 0.05,
-                                  },
-                                  opacity: {
-                                    duration: 0.4,
-                                    delay: 0.2 + i * 0.05,
-                                  },
-                                  y: {
-                                    duration: 3 + Math.random() * 2,
-                                    repeat: Infinity,
-                                    ease: "easeInOut",
-                                  },
-                                }}
+                                key={sub}
+                                initial={{ opacity: 0, y: 14 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                whileTap={{ scale: 0.96 }}
                                 onClick={() => {
-                                  setSelection({ ...selection, sub: sub });
+                                  setSelection({ ...selection, sub });
                                   const itemsInSubcategory = data[selection.cat]?.[sub] || [];
                                   if (itemsInSubcategory.length > 0) {
                                     setActiveCover(Math.floor(Math.random() * itemsInSubcategory.length));
                                   } else {
                                     setActiveCover(0);
                                   }
-                                  setReturnToGlobe(false); // Reset memory here!
+                                  setReturnToGlobe(false);
                                   setLevel(3);
                                 }}
                                 style={{
-                                  position: "absolute",
-                                  padding: isMobile ? "8px 12px" : "14px 38px",
-                                  borderRadius: "12px",
-                                  backgroundColor: "#FFFFFF", // Solid white hides the line!
-                                  border: "1px solid rgba(0, 0, 0, 0.05)", // Softer border for the solid white
-                                  boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.08)",
-                                  fontSize: isMobile ? "9px" : "13px",
+                                  padding: "16px 36px",
+                                  borderRadius: "50px",
+                                  backgroundColor: "#FFFFFF",
+                                  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.08)",
+                                  border: "1px solid rgba(0, 0, 0, 0.04)",
+                                  fontSize: "16px",
                                   fontWeight: "700",
-                                  zIndex: 10,
-                                  cursor: "pointer",
                                   color: "#000",
+                                  letterSpacing: "0.02em",
                                   whiteSpace: "nowrap",
+                                  maxWidth: "calc(100% - 32px)",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  textAlign: "center",
+                                  cursor: "pointer",
+                                  flexShrink: 0,
+                                  boxSizing: "border-box",
                                 }}
                               >
                                 {sub.toUpperCase()}
                               </motion.div>
-                            </React.Fragment>
-                          );
-                        }
-                      )}
-
-                      <motion.div
-                        layoutId={`pill-${selection.cat}`}
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      /* DESKTOP CONSTELLATION */
+                      <div
                         style={{
-                          position: "relative",
-                          top: isMobile ? "20px" : "30px",
-                          padding: isMobile ? "12px 24px" : "18px 55px",
-                          borderRadius: "50px",
-                          backgroundColor: "#333",
-                          color: "#FFF",
-                          fontSize: isMobile ? "10px" : "14px",
-                          fontWeight: "700",
-                          zIndex: 20,
-                          boxShadow: "0 12px 32px rgba(0, 0, 0, 0.15)",
-                          whiteSpace: "nowrap",
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
-                        {selection.cat.toUpperCase()}
-                      </motion.div>
-                    </div>
+                        {Object.keys(data[selection.cat] || {}).map(
+                          (sub, i, arr) => {
+                            const total = arr.length;
+                            const angle = (i / total) * 360 - 90;
+                            const radiusX = 260;
+                            const radiusY = 260;
+                            const baseX = Math.cos((angle * Math.PI) / 180) * radiusX;
+                            const baseY = Math.sin((angle * Math.PI) / 180) * radiusY;
+                            const offsetY = 30;
+
+                            return (
+                              <React.Fragment key={sub}>
+                                <svg
+                                  style={{
+                                    position: "absolute",
+                                    width: "100%",
+                                    height: "100%",
+                                    zIndex: 5,
+                                    pointerEvents: "none",
+                                  }}
+                                >
+                                  <motion.line
+                                    initial={{ pathLength: 0, opacity: 0 }}
+                                    animate={{ pathLength: 1, opacity: 1 }}
+                                    transition={{
+                                      duration: 0.8,
+                                      delay: 0.2 + i * 0.05,
+                                    }}
+                                    x1="50%"
+                                    y1={`calc(50% + ${offsetY}px)`}
+                                    x2={`calc(50% + ${baseX}px)`}
+                                    y2={`calc(50% + ${baseY + offsetY}px)`}
+                                    stroke="rgba(0,0,0,0.3)"
+                                    strokeWidth="1"
+                                  />
+                                </svg>
+
+                                <motion.div
+                                  initial={{
+                                    opacity: 0,
+                                    scale: 0.8,
+                                    x: baseX,
+                                    y: baseY + offsetY,
+                                  }}
+                                  animate={{
+                                    opacity: 1,
+                                    scale: 1,
+                                    x: baseX,
+                                    y: [
+                                      baseY + offsetY,
+                                      baseY + offsetY - 6,
+                                      baseY + offsetY,
+                                    ],
+                                  }}
+                                  transition={{
+                                    scale: {
+                                      duration: 0.4,
+                                      delay: 0.2 + i * 0.05,
+                                    },
+                                    opacity: {
+                                      duration: 0.4,
+                                      delay: 0.2 + i * 0.05,
+                                    },
+                                    y: {
+                                      duration: 3 + Math.random() * 2,
+                                      repeat: Infinity,
+                                      ease: "easeInOut",
+                                    },
+                                  }}
+                                  onClick={() => {
+                                    setSelection({ ...selection, sub });
+                                    const itemsInSubcategory = data[selection.cat]?.[sub] || [];
+                                    if (itemsInSubcategory.length > 0) {
+                                      setActiveCover(Math.floor(Math.random() * itemsInSubcategory.length));
+                                    } else {
+                                      setActiveCover(0);
+                                    }
+                                    setReturnToGlobe(false);
+                                    setLevel(3);
+                                  }}
+                                  style={{
+                                    position: "absolute",
+                                    padding: "14px 38px",
+                                    borderRadius: "12px",
+                                    backgroundColor: "#FFFFFF",
+                                    border: "1px solid rgba(0, 0, 0, 0.05)",
+                                    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.08)",
+                                    fontSize: "13px",
+                                    fontWeight: "700",
+                                    zIndex: 10,
+                                    cursor: "pointer",
+                                    color: "#000",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {sub.toUpperCase()}
+                                </motion.div>
+                              </React.Fragment>
+                            );
+                          }
+                        )}
+
+                        <motion.div
+                          layoutId={`pill-${selection.cat}`}
+                          style={{
+                            position: "relative",
+                            top: "30px",
+                            padding: "18px 55px",
+                            borderRadius: "50px",
+                            backgroundColor: "#333",
+                            color: "#FFF",
+                            fontSize: "14px",
+                            fontWeight: "700",
+                            zIndex: 20,
+                            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.15)",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {selection.cat.toUpperCase()}
+                        </motion.div>
+                      </div>
+                    )
                   )}
                 </div>
               )}
